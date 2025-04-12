@@ -8,9 +8,9 @@ import {
   TextField, 
   InputAdornment,
   Chip,
-  Paper,
   Stack,
-  Typography
+  Typography,
+  Divider
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -73,34 +73,41 @@ const FilterControls = ({ onFilter, popularTags = [] }) => {
   };
 
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="subtitle1" component="div" sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-          <TuneIcon fontSize="small" sx={{ mr: 1 }} />
-          Filter Questions
-        </Typography>
-        
-        <form onSubmit={handleSearchSubmit}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Search questions..."
-            size="small"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ mb: 2 }}
-          />
-        </form>
-        
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <FormControl size="small" sx={{ minWidth: 150 }}>
+    <Box>
+      <Stack 
+        direction={{ xs: 'column', sm: 'row' }} 
+        spacing={2} 
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        sx={{ mb: 2 }}
+      >
+        {/* Search Bar */}
+        <Box sx={{ flexGrow: 1 }}>
+          <form onSubmit={handleSearchSubmit}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Search questions..."
+              size="small"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </form>
+        </Box>
+
+        {/* Sort Controls */}
+        <Stack 
+          direction={{ xs: 'column', sm: 'row' }} 
+          spacing={1}
+          sx={{ minWidth: { sm: '300px' } }}
+        >
+          <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel id="sort-by-label">Sort By</InputLabel>
             <Select
               labelId="sort-by-label"
@@ -114,7 +121,7 @@ const FilterControls = ({ onFilter, popularTags = [] }) => {
             </Select>
           </FormControl>
           
-          <FormControl size="small" sx={{ minWidth: 150 }}>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel id="sort-order-label">Order</InputLabel>
             <Select
               labelId="sort-order-label"
@@ -127,31 +134,44 @@ const FilterControls = ({ onFilter, popularTags = [] }) => {
               <MenuItem value="asc">Ascending</MenuItem>
             </Select>
           </FormControl>
-        </Box>
-      </Box>
-      
+        </Stack>
+      </Stack>
+
+      {/* Tags Section */}
       {popularTags.length > 0 && (
-        <Box>
-          <Typography variant="subtitle2" sx={{ mb: 1 }}>
-            Popular Tags
-          </Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            {popularTags.map((tag) => (
-              <Chip
-                key={tag}
-                label={tag}
-                clickable
-                color={selectedTag === tag ? 'primary' : 'default'}
-                variant={selectedTag === tag ? 'filled' : 'outlined'}
-                onClick={() => handleTagClick(tag)}
-                size="small"
-                sx={{ mb: 1 }}
-              />
-            ))}
-          </Stack>
-        </Box>
+        <>
+          <Divider sx={{ my: 2 }} />
+          <Box>
+            <Typography 
+              variant="subtitle2" 
+              sx={{ 
+                mb: 1,
+                display: 'flex',
+                alignItems: 'center',
+                color: 'text.secondary'
+              }}
+            >
+              <TuneIcon fontSize="small" sx={{ mr: 1 }} />
+              Popular Tags
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              {popularTags.map((tag) => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  clickable
+                  color={selectedTag === tag ? 'primary' : 'default'}
+                  variant={selectedTag === tag ? 'filled' : 'outlined'}
+                  onClick={() => handleTagClick(tag)}
+                  size="small"
+                  sx={{ mb: 1 }}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </>
       )}
-    </Paper>
+    </Box>
   );
 };
 

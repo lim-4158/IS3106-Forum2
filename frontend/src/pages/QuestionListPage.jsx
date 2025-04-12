@@ -5,7 +5,8 @@ import {
   Box, 
   Button, 
   Pagination,
-  Grid
+  Paper,
+  Stack
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
@@ -101,87 +102,109 @@ const QuestionListPage = () => {
         <title>Questions | Forum</title>
       </Helmet>
       
-      <Grid container spacing={3}>
-        {/* Left sidebar for filters */}
-        <Grid item xs={12} md={3}>
-          <FilterControls 
-            onFilter={handleFilter} 
-            popularTags={popularTags} 
-          />
-        </Grid>
-        
-        {/* Main content */}
-        <Grid item xs={12} md={9}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-            <Typography variant="h4" component="h1">
-              Questions
-            </Typography>
-            
-            {isAuthenticated && (
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
-                component={RouterLink}
-                to="/ask"
-              >
-                Ask Question
-              </Button>
-            )}
-          </Box>
+      {/* Header Section */}
+      <Box sx={{ mb: 4 }}>
+        <Stack 
+          direction={{ xs: 'column', sm: 'row' }} 
+          spacing={2} 
+          alignItems={{ xs: 'stretch', sm: 'center' }}
+          justifyContent="space-between"
+        >
+          <Typography variant="h4" component="h1">
+            Questions
+          </Typography>
           
-          {loading ? (
-            <LoadingSpinner message="Loading questions..." />
-          ) : error ? (
-            <ErrorAlert message={error} />
-          ) : questions.length === 0 ? (
-            <Box sx={{ textAlign: 'center', py: 5 }}>
-              <Typography variant="h6" color="text.secondary" gutterBottom>
-                No questions found
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {searchParams.toString() ? 'Try adjusting your filters' : 'Be the first to ask a question!'}
-              </Typography>
-              
-              {isAuthenticated && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                  component={RouterLink}
-                  to="/ask"
-                  sx={{ mt: 2 }}
-                >
-                  Ask Question
-                </Button>
-              )}
-            </Box>
-          ) : (
-            <>
-              <Box sx={{ mb: 3 }}>
-                {paginatedQuestions.map((question) => (
-                  <QuestionCard 
-                    key={question._id} 
-                    question={question} 
-                    onVote={handleQuestionVote}
-                  />
-                ))}
-              </Box>
-              
-              {totalPages > 1 && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                  <Pagination 
-                    count={totalPages} 
-                    page={page} 
-                    onChange={handlePageChange} 
-                    color="primary" 
-                  />
-                </Box>
-              )}
-            </>
+          {isAuthenticated && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              component={RouterLink}
+              to="/ask"
+              sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+            >
+              Ask Question
+            </Button>
           )}
-        </Grid>
-      </Grid>
+        </Stack>
+      </Box>
+      
+      {/* Filter Section */}
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          mb: 4, 
+          p: 2, 
+          backgroundColor: 'background.default',
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2
+        }}
+      >
+        <FilterControls 
+          onFilter={handleFilter} 
+          popularTags={popularTags} 
+        />
+      </Paper>
+      
+      {/* Questions List Section */}
+      {loading ? (
+        <LoadingSpinner message="Loading questions..." />
+      ) : error ? (
+        <ErrorAlert message={error} />
+      ) : questions.length === 0 ? (
+        <Paper 
+          sx={{ 
+            p: 4, 
+            textAlign: 'center',
+            backgroundColor: 'background.default',
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 2
+          }}
+        >
+          <Typography variant="h6" color="text.secondary" gutterBottom>
+            No questions found
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {searchParams.toString() ? 'Try adjusting your filters' : 'Be the first to ask a question!'}
+          </Typography>
+          
+          {isAuthenticated && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              component={RouterLink}
+              to="/ask"
+              sx={{ mt: 2 }}
+            >
+              Ask Question
+            </Button>
+          )}
+        </Paper>
+      ) : (
+        <Stack spacing={2}>
+          {paginatedQuestions.map((question) => (
+            <QuestionCard 
+              key={question._id} 
+              question={question} 
+              onVote={handleQuestionVote}
+            />
+          ))}
+          
+          {totalPages > 1 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <Pagination 
+                count={totalPages} 
+                page={page} 
+                onChange={handlePageChange} 
+                color="primary" 
+              />
+            </Box>
+          )}
+        </Stack>
+      )}
     </Container>
   );
 };
