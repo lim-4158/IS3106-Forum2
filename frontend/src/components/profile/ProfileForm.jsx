@@ -3,14 +3,19 @@ import {
   Box,
   TextField,
   Button,
-  Paper,
   Typography,
   Alert,
   Avatar,
   Grid,
-  IconButton
+  IconButton,
+  Card,
+  Divider,
+  InputAdornment
 } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import EmailIcon from '@mui/icons-material/Email';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../utils/toast.jsx';
 import { uploadProfileImage } from '../../utils/api';
@@ -129,107 +134,188 @@ const ProfileForm = () => {
   };
   
   return (
-    <Paper sx={{ p: 3, mb: 3 }}>
-      <Typography variant="h5" component="h2" gutterBottom>
-        Edit Profile
-      </Typography>
+    <>
+      {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
       
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} display="flex" justifyContent="center">
-            <Box sx={{ position: 'relative' }}>
-              <Avatar
-                src={previewUrl}
-                alt={currentUser?.username}
-                sx={{ width: 100, height: 100, mb: 2 }}
-              >
-                {currentUser?.username?.charAt(0)?.toUpperCase()}
-              </Avatar>
-              <input
-                accept="image/*"
-                type="file"
-                id="profile-picture-input"
-                onChange={handleImageChange}
-                style={{ display: 'none' }}
-                disabled={uploadingImage}
-              />
-              <label htmlFor="profile-picture-input">
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="span"
-                  sx={{
-                    position: 'absolute',
-                    bottom: 0,
-                    right: 0,
-                    backgroundColor: 'background.paper'
-                  }}
-                  disabled={uploadingImage}
-                >
-                  <PhotoCameraIcon />
-                </IconButton>
-              </label>
-              {uploadingImage && (
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', textAlign: 'center' }}>
-                  Uploading...
-                </Typography>
-              )}
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12}>
-            <TextField
-              label="Username"
-              variant="outlined"
-              fullWidth
-              value={currentUser?.username || ''}
-              disabled
-              helperText="Username cannot be changed"
-            />
-          </Grid>
-          
-          <Grid item xs={12}>
-            <TextField
-              label="Email"
-              variant="outlined"
-              fullWidth
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={email && !validateEmail(email)}
-              helperText={email && !validateEmail(email) ? "Please enter a valid email" : ""}
-            />
-          </Grid>
-          
-          <Grid item xs={12}>
-            <TextField
-              label="Bio"
-              variant="outlined"
-              multiline
-              rows={4}
-              fullWidth
-              placeholder="Tell us about yourself"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              inputProps={{ maxLength: 500 }}
-              helperText={`${bio.length}/500 characters`}
-            />
-          </Grid>
-        </Grid>
-        
-        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary"
-            disabled={loading || uploadingImage}
-          >
-            {loading ? 'Saving...' : 'Save Changes'}
-          </Button>
+      <Card 
+        variant="outlined" 
+        sx={{ 
+          borderRadius: 2,
+          overflow: 'hidden'
+        }}
+      >
+        <Box sx={{ 
+          p: 3, 
+          backgroundColor: 'primary.main', 
+          color: 'primary.contrastText' 
+        }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Edit Profile Information
+          </Typography>
         </Box>
-      </form>
-    </Paper>
+        
+        <Box sx={{ p: 4 }}>
+          <form onSubmit={handleSubmit}>
+            {/* Top section with profile picture, username, email */}
+            <Grid container spacing={4} sx={{ mb: 2 }}>
+              {/* Profile picture on the left */}
+              <Grid item xs={12} sm={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Box sx={{ position: 'relative', mb: 2 }}>
+                  <Avatar
+                    src={previewUrl}
+                    alt={currentUser?.username}
+                    sx={{ 
+                      width: { xs: 120, sm: 140 }, 
+                      height: { xs: 120, sm: 140 },
+                      border: '3px solid white',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    {currentUser?.username?.charAt(0)?.toUpperCase()}
+                  </Avatar>
+                  
+                  <input
+                    accept="image/*"
+                    type="file"
+                    id="profile-picture-input"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
+                    disabled={uploadingImage}
+                  />
+                  
+                  <label htmlFor="profile-picture-input">
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
+                      sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                        backgroundColor: 'white',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                        '&:hover': {
+                          backgroundColor: 'white',
+                          boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+                        }
+                      }}
+                      disabled={uploadingImage}
+                    >
+                      <PhotoCameraIcon />
+                    </IconButton>
+                  </label>
+                </Box>
+                
+                {uploadingImage && (
+                  <Typography variant="caption" color="text.secondary">
+                    Uploading...
+                  </Typography>
+                )}
+                
+                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                  Click the camera icon to change your profile picture
+                </Typography>
+              </Grid>
+              
+              {/* Username and email on the right */}
+              <Grid item xs={12} sm={8}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle2" sx={{ mb: 0.5, color: 'text.secondary' }}>
+                      Username
+                    </Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      value={currentUser?.username || ''}
+                      disabled
+                      size="small"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircleIcon color="disabled" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      helperText="Username cannot be changed"
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle2" sx={{ mb: 0.5, color: 'text.secondary' }}>
+                      Email
+                    </Typography>
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      error={email && !validateEmail(email)}
+                      size="small"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <EmailIcon color="primary" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      helperText={email && !validateEmail(email) ? "Please enter a valid email" : ""}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            
+            {/* Bio taking full width below */}
+            <Box sx={{ width: '100%', mt: 3 }}>
+              <Typography variant="subtitle2" sx={{ mb: 0.5, color: 'text.secondary' }}>
+                Bio
+              </Typography>
+              <TextField
+                variant="outlined"
+                multiline
+                rows={4}
+                fullWidth
+                placeholder="Tell us about yourself"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                inputProps={{ maxLength: 500 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
+                      <DescriptionIcon color="primary" />
+                    </InputAdornment>
+                  )
+                }}
+              />
+              <Typography variant="caption" color="text.secondary" align="right" sx={{ display: 'block', mt: 0.5 }}>
+                {bio.length}/500 characters
+              </Typography>
+            </Box>
+            
+            <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
+              <Button 
+                type="submit" 
+                variant="contained" 
+                color="primary"
+                disabled={loading || uploadingImage}
+                size="large"
+                sx={{
+                  borderRadius: 1,
+                  px: 4,
+                  backgroundColor: '#0a4d8f',
+                  '&:hover': {
+                    backgroundColor: '#083b6f'
+                  }
+                }}
+              >
+                {loading ? 'SAVING...' : 'SAVE CHANGES'}
+              </Button>
+            </Box>
+          </form>
+        </Box>
+      </Card>
+    </>
   );
 };
 

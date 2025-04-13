@@ -16,6 +16,7 @@ import QuestionCard from '../components/questions/QuestionCard';
 import FilterControls from '../components/questions/FilterControls';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorAlert from '../components/common/ErrorAlert';
+import Breadcrumbs from '../components/common/Breadcrumbs';
 import { getQuestions } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -101,6 +102,12 @@ const QuestionListPage = () => {
       <Helmet>
         <title>Questions | Forum</title>
       </Helmet>
+      
+      <Breadcrumbs
+        items={[
+          { label: 'Questions' }
+        ]}
+      />
       
       {/* Header Section */}
       <Box sx={{ mb: 4 }}>

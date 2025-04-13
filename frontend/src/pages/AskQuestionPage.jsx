@@ -1,6 +1,7 @@
 import { Container, Typography, Box } from '@mui/material';
 import { Helmet } from 'react-helmet';
 import QuestionForm from '../components/questions/QuestionForm';
+import Breadcrumbs from '../components/common/Breadcrumbs';
 
 const AskQuestionPage = () => {
   return (
@@ -8,6 +9,13 @@ const AskQuestionPage = () => {
       <Helmet>
         <title>Ask a Question | Forum</title>
       </Helmet>
+      
+      <Breadcrumbs
+        items={[
+          { label: 'Questions', path: '/' },
+          { label: 'Ask a Question' }
+        ]}
+      />
       
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" component="h1" gutterBottom>

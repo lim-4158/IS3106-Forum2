@@ -20,6 +20,7 @@ import AnswerCard from '../components/answers/AnswerCard';
 import AnswerForm from '../components/answers/AnswerForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorAlert from '../components/common/ErrorAlert';
+import Breadcrumbs from '../components/common/Breadcrumbs';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../utils/toast.jsx';
 import { 
@@ -260,11 +261,18 @@ const QuestionDetailPage = () => {
         <title>{question.title} | Forum</title>
       </Helmet>
       
-      {/* Question */}
-      <QuestionDetail 
+      <Breadcrumbs
+        items={[
+          { label: 'Questions', path: '/' },
+          { label: question.title }
+        ]}
+      />
+      
+      <QuestionDetail
         question={question}
         onEdit={handleEditQuestion}
         onDelete={handleDeleteDialogOpen}
+        setQuestion={setQuestion}
       />
       
       {/* Answers section */}
