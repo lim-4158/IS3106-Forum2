@@ -181,17 +181,7 @@ const ProfilePage = () => {
               display: 'flex', 
               justifyContent: 'center',
             }}>
-              <Chip 
-                label={`${totalQuestions} Questions`} 
-                color="primary" 
-                sx={{ 
-                  px: 2,
-                  height: 40, 
-                  fontWeight: 500, 
-                  fontSize: '1rem' 
-                }}
-                icon={<QuestionAnswerIcon />}
-              />
+ 
             </Box>
           </Grid>
         </Grid>

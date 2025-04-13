@@ -9,10 +9,19 @@ import {
   Checkbox,
   Box,
   LinearProgress,
-  Typography 
+  Typography,
+  InputAdornment,
+  IconButton,
+  Divider
 } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined';
 
 // Password strength indicator
 const PasswordStrengthMeter = ({ password }) => {
@@ -43,14 +52,14 @@ const PasswordStrengthMeter = ({ password }) => {
 
   return (
     <Box sx={{ width: '100%', mt: 1, mb: 2 }}>
-      <Typography variant="caption" color="text.secondary">
-        Password strength: {label}
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <span>Password strength:</span> <span style={{ fontWeight: 'medium' }}>{label}</span>
       </Typography>
       <LinearProgress 
         variant="determinate" 
         value={strength} 
         color={color}
-        sx={{ borderRadius: 1, height: 8 }}
+        sx={{ borderRadius: 4, height: 6 }}
       />
     </Box>
   );
@@ -64,6 +73,8 @@ const SignupForm = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -118,7 +129,18 @@ const SignupForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && (
+        <Alert 
+          severity="error" 
+          sx={{ 
+            mb: 3, 
+            borderRadius: '8px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+          }}
+        >
+          {error}
+        </Alert>
+      )}
       
       <TextField
         variant="outlined"
@@ -132,6 +154,15 @@ const SignupForm = () => {
         autoFocus
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <PersonOutlineIcon color="action" />
+            </InputAdornment>
+          ),
+          sx: { borderRadius: '10px' }
+        }}
+        sx={{ mb: 2 }}
       />
       
       <TextField
@@ -147,6 +178,15 @@ const SignupForm = () => {
         onChange={(e) => setEmail(e.target.value)}
         error={email && !validateEmail(email)}
         helperText={email && !validateEmail(email) ? "Please enter a valid email" : ""}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <EmailOutlinedIcon color="action" />
+            </InputAdornment>
+          ),
+          sx: { borderRadius: '10px' }
+        }}
+        sx={{ mb: 2 }}
       />
       
       <TextField
@@ -156,11 +196,30 @@ const SignupForm = () => {
         fullWidth
         name="password"
         label="Password"
-        type="password"
+        type={showPassword ? "text" : "password"}
         id="password"
         autoComplete="new-password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <LockOutlinedIcon color="action" />
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+          sx: { borderRadius: '10px' }
+        }}
       />
 
       {password && <PasswordStrengthMeter password={password} />}
@@ -172,12 +231,32 @@ const SignupForm = () => {
         fullWidth
         name="confirmPassword"
         label="Confirm Password"
-        type="password"
+        type={showConfirmPassword ? "text" : "password"}
         id="confirmPassword"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         error={confirmPassword && password !== confirmPassword}
         helperText={confirmPassword && password !== confirmPassword ? "Passwords don't match" : ""}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SecurityOutlinedIcon color="action" />
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                edge="end"
+              >
+                {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+          sx: { borderRadius: '10px' }
+        }}
+        sx={{ mb: 2 }}
       />
       
       <FormControlLabel
@@ -189,7 +268,15 @@ const SignupForm = () => {
             onChange={(e) => setAgreeTerms(e.target.checked)}
           />
         }
-        label="I agree to the terms and conditions"
+        label={
+          <Typography variant="body2">
+            I agree to the{' '}
+            <Link component={RouterLink} to="/terms" sx={{ textDecoration: 'none' }}>
+              terms and conditions
+            </Link>
+          </Typography>
+        }
+        sx={{ mb: 2, mt: 1 }}
       />
       
       <Button
@@ -197,19 +284,44 @@ const SignupForm = () => {
         fullWidth
         variant="contained"
         color="primary"
-        sx={{ mt: 3, mb: 2 }}
+        size="large"
+        sx={{ 
+          mt: 1, 
+          mb: 3, 
+          py: 1.5, 
+          borderRadius: '10px',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          fontSize: '1rem',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }}
         disabled={loading}
       >
-        {loading ? 'Creating Account...' : 'Sign Up'}
+        {loading ? 'Creating Account...' : 'Create Account'}
       </Button>
       
-      <Grid container justifyContent="flex-end">
-        <Grid item>
-          <Link component={RouterLink} to="/login" variant="body2">
-            Already have an account? Sign in
-          </Link>
-        </Grid>
-      </Grid>
+      <Divider sx={{ my: 3 }}>
+        <Typography variant="body2" color="text.secondary">
+          OR
+        </Typography>
+      </Divider>
+      
+      <Box sx={{ textAlign: 'center', mt: 2 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          Already have an account?
+        </Typography>
+        <Link 
+          component={RouterLink} 
+          to="/login" 
+          variant="body1" 
+          sx={{ 
+            fontWeight: 'medium',
+            textDecoration: 'none' 
+          }}
+        >
+          Sign in here
+        </Link>
+      </Box>
     </form>
   );
 };
